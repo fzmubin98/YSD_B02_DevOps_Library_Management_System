@@ -1,0 +1,41 @@
+apiVersion: v3
+kind: Deployment
+metadata:
+  name: jdk-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: jdk-java
+  template:
+    metadata:
+      labels:
+        app: jdk-java
+    spec:
+       containers:
+        - name: jdk-java
+          image: fazlemubin/final_project:latest
+          imagePullPolicy: "Always"
+          env:
+          - name: MYSQL_HOST
+            value: mysql-service
+          - name: MYSQL_PORT
+            value: "3306"
+            
+          ports:
+            - containerPort: 8080
+
+---
+apiVersion: v3
+kind: Service
+metadata:
+  name: jdk-service
+spec:
+  selector:
+    app: jdk-java
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30191
+  type: NodePort

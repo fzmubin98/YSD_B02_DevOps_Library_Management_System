@@ -1,0 +1,14 @@
+apiVersion: v3
+kind: PersistentVolume
+metadata:
+  name: mysql-pv-final
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  hostPath:
+    path: /tmp/mysql-final-data
