@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: jdk-deployment
@@ -26,7 +26,7 @@ spec:
             - containerPort: 8080
 
 ---
-apiVersion: v3
+apiVersion: apps/v1
 kind: Service
 metadata:
   name: jdk-service
