@@ -4,6 +4,6 @@ metadata:
   name: mysql-config-final
 data:
   MYSQL_USER: fazle
-  MYSQL_ROOT_PASSWORD: fazle1234
+  MYSQL_ROOT_PASSWORD: bjit1234
   MYSQL_DATABASE: sparklmsdb
-  MYSQL_PASSWORD: bjit1234
+  MYSQL_PASSWORD: fazle1234
