@@ -8,4 +8,4 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  volumeName: mysql-pvc-final
+  volumeName: mysql-pv-final
