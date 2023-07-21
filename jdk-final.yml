@@ -14,7 +14,7 @@ spec:
     spec:
        containers:
         - name: jdk-java
-          image: fazlemubin/final_project:${BUILD_NUMBER}
+          image: fazlemubin/final_project:latest
           imagePullPolicy: "Always"
           env:
           - name: MYSQL_HOST
