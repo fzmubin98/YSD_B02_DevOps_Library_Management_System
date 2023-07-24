@@ -1,0 +1,64 @@
+pipeline {
+    agent any
+    triggers {
+        pollSCM('H/2 * * * *') // Polls the SCM every 2 minutes
+    }
+
+    stages {
+        stage('SCM') {
+            steps {
+               git branch: 'main', credentialsId: 'fazle-jenkins-github', url: 'git@github.com:fazle-mubin-bjit/YSD_B02_DevOps_Library_Management_System.git'
+            }
+        }
+        stage('Jar Build') {
+            steps {
+                script {
+                    sh 'chmod +x mvnw'
+                    sh './mvnw clean install'
+                }
+            }
+        }
+        stage('Docker Image Build') {
+            steps {
+                script{
+                    def imageName = "fazlemubin/final_project:${BUILD_NUMBER}"
+                    final_img = docker.build(imageName)
+                }
+            }
+        }
+        stage('Push to docker') {
+            steps {
+                script{
+                    withDockerRegistry(credentialsId: 'a603da7a-35a8-47e9-a61f-a11864881484', url: '') {
+                    final_img.push()
+                    }
+                
+                }
+            }
+        }
+        stage('Deploy in kubernetes') {
+            steps{
+                script {
+                    withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'kube-fazle', namespace: '', restrictKubeConfigAccess: false, serverUrl: '') {
+                        sh 'sed -i "s/latest/${BUILD_ID}/g" jdk-final.yml'
+                        try {
+                            sh 'kubectl delete -f jdk-final.yml'
+                            sh 'kubectl delete -f mysql-final.yml'
+                            sh 'kubectl delete -f mysql-secret.yml'
+                            sh 'kubectl delete -f mysql-pvc-final.yml'
+                            sh 'kubectl delete -f mysql-pv-final.yml'
+                        } catch (Exception e) {
+                            echo "Exception occurred while deleting Kubernetes resources: ${e.getMessage()}"
+                        }
+                        
+                        sh'kubectl apply -f mysql-pv-final.yml'
+                        sh'kubectl apply -f mysql-pvc-final.yml'
+                        sh'kubectl apply -f mysql-secret.yml'
+                        sh'kubectl apply -f mysql-final.yml'
+                        sh'kubectl apply -f jdk-final.yml'
+                    }
+                }
+            }
+        }    
+    }
+}
